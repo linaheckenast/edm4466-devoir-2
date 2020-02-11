@@ -1,0 +1,50 @@
+# coding : utf-8
+
+import requests, csv, json
+#ça me dit que json est importé, mais inutilisé
+
+fichier = "lobbyistes.csv"
+
+url = "http://jhroy.ca/uqam/lobby.json"
+
+entetes = {
+    "User-Agent":"Lina - requête envoyée dans le cadre du cours de journalisme de données", "From":"lina.heckenast@gmail.com"
+    }
+
+req = requests.get(url, headers = entetes)
+
+print(req)
+
+if req.status_code != 200:
+    print("Erreur!")
+
+else :
+    registre = req.json()
+    n = 0
+    for lobbyiste in registre:
+        infos = list()
+        code = registre["registre"][n][0]["client_org_corp_num"]
+        nomFR =registre["registre"][n][0]["fr_client_org_corp_nm"]
+        nomEN = registre["registre"][n][0]["en_client_org_corp_nm"]
+        date = registre["registre"][n][0]["date_comm"]
+        sujetP = registre["registre"][n][1][0]["objet"]
+        sujetA = registre["registre"][n][1][0]["objet_autre"]
+        institution = registre["registre"][n][2][0]["institution"]
+
+        n+=1
+        if "limat" in sujetP or "limat" in sujetA:
+
+            
+            infos.append(code)
+            infos.append(nomFR)
+            infos.append(nomEN)
+            infos.append(date)
+            infos.append(sujetP)
+            infos.append(sujetA)
+            infos.append(institution)
+
+            loud=open(fichier,"a")
+            lary=csv.writer(loud)
+            lary.writerow(infos)
+
+        #le fichier csv ne se créé plus pour une raison qui m'échappe
